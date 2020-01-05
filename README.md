@@ -2,6 +2,8 @@
 
 Simple GUI for [fb2converter](https://github.com/rupor-github/fb2converter) drag & drop files into Kindle.
 
+![](.screenshots/demo.gif)
+
 ## Usage
 
  - Download latest release of Fb2Kindle and fb2converter and unpack into one folder.
