@@ -8,5 +8,5 @@ Simple GUI for [fb2converter](https://github.com/rupor-github/fb2converter) drag
 
  - Download latest release of Fb2Kindle and fb2converter and unpack into one folder.
  - Create configuration file for fb2converter and place it near `fb2c.exe`.
- - Run Fb2Kindle, drag & drop any `.fb2` or `.fb2.zip` file.
+ - Run Fb2Kindle, drag & drop any `.fb2`, `.fb2.zip` or `.epub` file.
  - Have fun time.

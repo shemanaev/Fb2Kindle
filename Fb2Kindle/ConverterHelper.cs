@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -42,6 +42,9 @@ namespace Fb2Kindle
         {
             if (!IsFound) return false;
 
+            var isEpub = source.ToLowerInvariant().EndsWith(".epub");
+            var action = isEpub ? "transfer" : "convert";
+
             var log = new StringBuilder(1000);
             var fb2mobi = new Process();
             fb2mobi.StartInfo.CreateNoWindow = true;
@@ -50,7 +53,7 @@ namespace Fb2Kindle
             fb2mobi.StartInfo.RedirectStandardError = true;
             fb2mobi.StartInfo.FileName = _path;
             fb2mobi.StartInfo.WorkingDirectory = Path.GetDirectoryName(_path);
-            fb2mobi.StartInfo.Arguments = $@"-c ""{_config}"" convert --nodirs --ow --to mobi ""{source}"" ""{destination}""";
+            fb2mobi.StartInfo.Arguments = $@"-c ""{_config}"" {action} --nodirs --ow --to mobi ""{source}"" ""{destination}""";
             fb2mobi.OutputDataReceived += (sender, args) => log.AppendLine(args.Data);
             fb2mobi.ErrorDataReceived += (sender, args) => log.AppendLine(args.Data);
 

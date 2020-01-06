@@ -31,6 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             this.lblStatus = new System.Windows.Forms.Label();
             this.picWorking = new System.Windows.Forms.PictureBox();
+            this.lblStatus2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.picWorking)).BeginInit();
             this.SuspendLayout();
             // 
@@ -55,11 +56,22 @@
             this.picWorking.TabStop = false;
             this.picWorking.Visible = false;
             // 
+            // lblStatus2
+            // 
+            this.lblStatus2.AutoSize = true;
+            this.lblStatus2.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblStatus2.Location = new System.Drawing.Point(12, 213);
+            this.lblStatus2.Name = "lblStatus2";
+            this.lblStatus2.Size = new System.Drawing.Size(45, 17);
+            this.lblStatus2.TabIndex = 2;
+            this.lblStatus2.Text = "label1";
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 261);
+            this.Controls.Add(this.lblStatus2);
             this.Controls.Add(this.picWorking);
             this.Controls.Add(this.lblStatus);
             this.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -86,6 +98,7 @@
 
         private System.Windows.Forms.Label lblStatus;
         private System.Windows.Forms.PictureBox picWorking;
+        private System.Windows.Forms.Label lblStatus2;
     }
 }
 

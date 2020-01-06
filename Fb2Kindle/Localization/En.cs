@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace Fb2Kindle.Localization
 {
@@ -11,7 +11,7 @@ namespace Fb2Kindle.Localization
             {"DeviceFound", "Kindle found as {0}"},
             {"DeviceNotFound", "Kindle not found!"},
             {"Success", "Successfully converted {0} book(s)."},
-            {"Working", "Processing books..."},
+            {"Working", "Processing book..."},
         };
     }
 }

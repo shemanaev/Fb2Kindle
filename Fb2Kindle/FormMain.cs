@@ -1,10 +1,12 @@
-﻿using Fb2Kindle.Localization;
 using System;
 using System.Collections.Concurrent;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using Fb2Kindle.Localization;
 
 namespace Fb2Kindle
 {
@@ -27,6 +29,7 @@ namespace Fb2Kindle
 
         private void FormMain_Load(object sender, EventArgs e)
         {
+            lblStatus2.Text = "";
             _kindle = new KindleFinder();
             if (!_kindle.IsFound)
             {
@@ -64,6 +67,7 @@ namespace Fb2Kindle
                 picWorking.Visible = false;
                 lblStatus.Text = text;
                 lblStatus.ForeColor = Color.OrangeRed;
+                lblStatus2.Text = "";
                 AllowDrop = false;
 
                 if (!string.IsNullOrEmpty(log))
@@ -75,18 +79,36 @@ namespace Fb2Kindle
             }
         }
 
-        private void ShowBusy()
+        private void ShowBusy(string file)
         {
             if (InvokeRequired)
             {
-                Invoke(new MethodInvoker(() => ShowBusy()));
+                Invoke(new MethodInvoker(() => ShowBusy(file)));
             }
             else
             {
                 picWorking.Visible = true;
-                lblStatus.Text = _locale.GetString("Working");
-                lblStatus.ForeColor = Color.DarkSlateGray;
+                lblStatus2.Text = _locale.GetString("Working");
+                lblStatus2.ForeColor = Color.DarkSlateGray;
+                lblStatus.Text = GetCurrentFileStatus(file);
+                lblStatus.ForeColor = Color.DarkGray;
             }
+        }
+
+        private string GetCurrentFileStatus(string file)
+        {
+            const int MaxLen = 28;
+            if (file.Length <= MaxLen) return file;
+
+            var parts = file.Split('\\').Reverse().ToArray();
+            string name = parts[0];
+            for (var i = 1; i < parts.Length; i++)
+            {
+                name = parts[i] + "\\" + name;
+                if (name.Length >= MaxLen) break;
+            }
+
+            return "..." + name.Substring(Math.Max(0, name.Length - MaxLen - 3));
         }
 
         private void SuccessfullyConverted()
@@ -100,6 +122,7 @@ namespace Fb2Kindle
                 picWorking.Visible = false;
                 lblStatus.Text = _locale.GetString("Success", ++_success);
                 lblStatus.ForeColor = Color.LimeGreen;
+                lblStatus2.Text = "";
             }
         }
 
@@ -109,7 +132,7 @@ namespace Fb2Kindle
             {
                 if (_files.TryDequeue(out string file))
                 {
-                    ShowBusy();
+                    ShowBusy(file);
 
                     if (!_converter.Run(file, _kindle.Documents))
                     {
@@ -126,7 +149,8 @@ namespace Fb2Kindle
 
         private void FormMain_DragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.Copy;
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                e.Effect = DragDropEffects.Copy;
         }
 
         private void FormMain_DragDrop(object sender, DragEventArgs e)
@@ -134,7 +158,14 @@ namespace Fb2Kindle
             var files = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (var file in files)
             {
-                _files.Enqueue(file);
+                if (file.ToLowerInvariant().EndsWith(".epub") ||
+                    file.ToLowerInvariant().EndsWith(".fb2") ||
+                    file.ToLowerInvariant().EndsWith(".fbz") ||
+                    file.ToLowerInvariant().EndsWith(".fb2.zip") ||
+                    Convert.ToBoolean(File.GetAttributes(file) & FileAttributes.Directory))
+                {
+                    _files.Enqueue(file);
+                }
             }
         }
 
@@ -149,12 +180,12 @@ namespace Fb2Kindle
             e.Graphics.DrawLine(p, 140, 40, 140, 200);
 
             // Border
-            const int borderWidth = 7;
+            const int BorderWidth = 7;
             ControlPaint.DrawBorder(e.Graphics, ClientRectangle,
-                Color.LightGray, borderWidth, ButtonBorderStyle.Dotted,
-                Color.LightGray, borderWidth, ButtonBorderStyle.Dotted,
-                Color.LightGray, borderWidth, ButtonBorderStyle.Dotted,
-                Color.LightGray, borderWidth, ButtonBorderStyle.Dotted);
+                Color.LightGray, BorderWidth, ButtonBorderStyle.Dotted,
+                Color.LightGray, BorderWidth, ButtonBorderStyle.Dotted,
+                Color.LightGray, BorderWidth, ButtonBorderStyle.Dotted,
+                Color.LightGray, BorderWidth, ButtonBorderStyle.Dotted);
         }
 
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
