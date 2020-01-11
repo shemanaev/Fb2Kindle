@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -17,24 +16,27 @@ namespace Fb2Kindle
 
         public ConverterHelper()
         {
-            var fb2mobi1 = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "fb2c.exe");
-            var fb2mobi2 = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "fb2converter", "fb2c.exe");
+            const string ExeName = "fb2c.exe";
+            var configExts = new[] { ".toml", ".yaml", ".yml", ".json" };
 
-            var ext = new List<string> { "toml", "yaml", "yml", "json" };
-            var configs = Directory
-                .EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory, "*.*", SearchOption.AllDirectories)
-                .Where(s => ext.Contains(Path.GetExtension(s).Substring(1).ToLowerInvariant()));
+            var paths = new[] {
+                AppDomain.CurrentDomain.BaseDirectory,
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "fb2converter"),
+            }.Where(p => Directory.Exists(p)).ToList();
+
+            var configs = paths.SelectMany(p => Directory.EnumerateFiles(p, "*.*", SearchOption.TopDirectoryOnly)
+                .Where(name => configExts.Any(ext => name.EndsWith(ext, StringComparison.OrdinalIgnoreCase))));
             _config = configs.FirstOrDefault();
 
-            if (File.Exists(fb2mobi1) && _config != null)
+            foreach (var p in paths)
             {
-                IsFound = true;
-                _path = fb2mobi1;
-            }
-            if (File.Exists(fb2mobi2) && _config != null)
-            {
-                IsFound = true;
-                _path = fb2mobi2;
+                var exe = Path.Combine(p, ExeName);
+                if (File.Exists(exe) && _config != null)
+                {
+                    IsFound = true;
+                    _path = exe;
+                    break;
+                }
             }
         }
 
